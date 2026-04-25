@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}History — MediClassify{% endblock %}
+{% block content %}
+
+<section class="page-section">
+  <div class="container">
+    <div class="page-header">
+      <h2>🕒 Report History</h2>
+      <p>All your previously analyzed medical reports</p>
+    </div>
+
+    {% if reports %}
+    <div class="history-grid">
+      {% for r in reports %}
+      <div class="history-card">
+        <div class="history-card-header">
+          <span class="history-icon">
+            {% if r['category'] == 'Surgery' %}🔪
+            {% elif r['category'] == 'Radiology' %}🩻
+            {% else %}🧠{% endif %}
+          </span>
+          <div>
+            <div class="history-category">{{ r['category'] }}</div>
+            <div class="history-date">{{ r['created_at'] }}</div>
+          </div>
+          <div class="history-conf">{{ r['confidence'] }}%</div>
+        </div>
+        <div class="history-filename">📄 {{ r['filename'] }}</div>
+        <div class="history-preview">{{ r['extracted_text'][:120] }}...</div>
+        <div class="history-actions">
+          <a href="{{ url_for('result', report_id=r['id']) }}" class="btn-sm-primary">View Result</a>
+          <a href="{{ url_for('delete_report', report_id=r['id']) }}"
+             class="btn-sm-danger"
+             onclick="return confirm('Delete this report?')">Delete</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>No reports yet</h3>
+      <p>Upload your first medical report to get started</p>
+      <a href="{{ url_for('upload') }}" class="btn-primary">Upload Report →</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

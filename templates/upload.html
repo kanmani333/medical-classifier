@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Upload Report — MediClassify{% endblock %}
+{% block content %}
+
+<section class="page-section">
+  <div class="container-sm">
+    <div class="page-header">
+      <h2>📤 Upload Medical Report</h2>
+      <p>Upload a PDF or image of your medical report for instant AI classification</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="upload-form">
+      <div class="upload-box" id="upload-box">
+        <input type="file" name="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg" hidden/>
+        <div class="upload-content" id="upload-content">
+          <div class="upload-icon">📂</div>
+          <h3>Drag & Drop your file here</h3>
+          <p>or click to browse</p>
+          <span class="upload-hint">Supports: PDF, PNG, JPG (Max 16MB)</span>
+        </div>
+        <div class="upload-preview" id="upload-preview" style="display:none;">
+          <div class="preview-icon">📄</div>
+          <div class="preview-name" id="preview-name"></div>
+          <div class="preview-size" id="preview-size"></div>
+        </div>
+      </div>
+
+      <div class="upload-actions">
+        <button type="submit" class="btn-primary btn-full" id="analyze-btn" disabled>
+          🔍 Analyze Report
+        </button>
+      </div>
+    </form>
+
+    <!-- Analyzing loader -->
+    <div class="analyzing-loader" id="loader" style="display:none;">
+      <div class="loader-spinner"></div>
+      <h3>Analyzing your report...</h3>
+      <p>Extracting text and classifying with AI</p>
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-cards">
+      <div class="info-card">
+        <span>🔒</span>
+        <p>Your reports are private and secure</p>
+      </div>
+      <div class="info-card">
+        <span>⚡</span>
+        <p>Results in under 10 seconds</p>
+      </div>
+      <div class="info-card">
+        <span>🎯</span>
+        <p>94.4% classification accuracy</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

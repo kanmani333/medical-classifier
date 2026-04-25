@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Result — MediClassify{% endblock %}
+{% block content %}
+
+<section class="page-section">
+  <div class="container-sm">
+    <div class="page-header">
+      <h2>📊 Classification Result</h2>
+      <p>AI analysis complete</p>
+    </div>
+
+    <!-- Main result card -->
+    <div class="result-card" style="border-top: 5px solid {{ info.color }}; background: {{ info.bg }};">
+      <div class="result-icon">{{ info.icon }}</div>
+      <div class="result-category">{{ report['category'] }}</div>
+      <div class="result-desc">{{ info.desc }}</div>
+      <div class="confidence-bar-wrap">
+        <div class="confidence-label">Confidence Score</div>
+        <div class="confidence-bar">
+          <div class="confidence-fill" style="width: {{ report['confidence'] }}%; background: {{ info.color }};"></div>
+        </div>
+        <div class="confidence-pct" style="color: {{ info.color }};">{{ report['confidence'] }}%</div>
+      </div>
+    </div>
+
+    <!-- Keywords -->
+    {% if keywords %}
+    <div class="section-card">
+      <h3>🔑 Key Medical Terms Found</h3>
+      <div class="keywords-wrap">
+        {% for kw in keywords %}
+          <span class="keyword-tag" style="background: {{ info.bg }}; border-color: {{ info.color }}; color: {{ info.color }};">{{ kw }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Extracted text -->
+    <div class="section-card">
+      <h3>📄 Extracted Text</h3>
+      <div class="extracted-text">{{ report['extracted_text'][:1000] }}{% if report['extracted_text']|length > 1000 %}...{% endif %}</div>
+    </div>
+
+    <!-- Report info -->
+    <div class="section-card">
+      <h3>📋 Report Details</h3>
+      <div class="details-grid">
+        <div class="detail-item"><span>File</span><strong>{{ report['filename'] }}</strong></div>
+        <div class="detail-item"><span>Date</span><strong>{{ report['created_at'] }}</strong></div>
+        <div class="detail-item"><span>Category</span><strong>{{ report['category'] }}</strong></div>
+        <div class="detail-item"><span>Confidence</span><strong>{{ report['confidence'] }}%</strong></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+      <a href="{{ url_for('upload') }}" class="btn-primary">Upload Another →</a>
+      <a href="{{ url_for('history') }}" class="btn-outline">View History</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

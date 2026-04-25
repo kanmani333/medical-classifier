@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Login — MediClassify{% endblock %}
+{% block content %}
+
+<section class="auth-section">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">🔐</div>
+      <h2>Welcome Back</h2>
+      <p>Login to access your medical reports</p>
+    </div>
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="Enter your email" required/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter your password" required/>
+      </div>
+      <button type="submit" class="btn-primary btn-full">Login →</button>
+    </form>
+    <p class="auth-switch">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+  </div>
+</section>
+
+{% endblock %}
