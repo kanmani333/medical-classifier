@@ -115,10 +115,13 @@ def extract_text(filepath):
         text = ' '.join(page.get_text() for page in doc)
         return text.strip()
     else:
-        img  = Image.open(filepath)
-        text = pytesseract.image_to_string(img)
-        return text.strip()
-
+        try:
+            img  = Image.open(filepath)
+            text = pytesseract.image_to_string(img)
+            return text.strip()
+        except Exception:
+            # If tesseract not available, try reading as PDF
+            return "Image OCR not available. Please upload a PDF file."
 def get_confidence(text):
     decision = pipeline.named_steps['svm'].decision_function(
         pipeline.named_steps['tfidf'].transform([text])
@@ -271,4 +274,8 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 # ── Init DB on import (for gunicorn) ─────────────────────────
-init_db()
+# ── Init DB on import (for gunicorn) ─────────────────────────
+with app.app_context():
+    os.makedirs('uploads', exist_ok=True)
+    os.makedirs('instance', exist_ok=True)
+    init_db()
