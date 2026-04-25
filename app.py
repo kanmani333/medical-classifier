@@ -122,21 +122,16 @@ def extract_text(filepath):
             text = ' '.join(page.get_text() for page in doc)
             return text.strip(), None
         else:
-            # Try tesseract if available
             try:
                 import pytesseract
+                pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
                 img  = Image.open(filepath)
                 text = pytesseract.image_to_string(img)
                 if text.strip():
                     return text.strip(), None
-            except Exception:
-                pass
-            # Fallback — try reading image as PDF
-            doc  = fitz.open(filepath)
-            text = ' '.join(page.get_text() for page in doc)
-            if text.strip():
-                return text.strip(), None
-            return None, 'Image text extraction failed. Please upload a PDF file.'
+                return None, 'Could not read text from image. Try a clearer image or PDF.'
+            except Exception as e:
+                return None, f'Image OCR failed: {str(e)}. Please upload a PDF instead.'
     except Exception as e:
         return None, f'Could not extract text: {str(e)}'
 
@@ -223,7 +218,7 @@ def upload():
         # Extract text
         text, error = extract_text(filepath)
         if error or not text or len(text.strip()) < 10:
-            flash(error or 'Could not extract text. Please upload a clearer PDF.', 'error')
+            flash(error or 'Could not extract text. Please upload a clearer PDF or image.', 'error')
             return redirect(url_for('upload'))
 
         # Classify
@@ -284,4 +279,5 @@ init_db()
 
 # ── Run ───────────────────────────────────────────────────────
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
