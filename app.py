@@ -14,7 +14,7 @@ app.secret_key = 'medicalclassifier2024secretkey'
 # ── Create required folders on startup ───────────────────────
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR   = os.path.join(BASE_DIR, 'uploads')
-INSTANCE_DIR = os.path.join(BASE_DIR, 'instance')
+INSTANCE_DIR = '/tmp'
 os.makedirs(UPLOAD_DIR,   exist_ok=True)
 os.makedirs(INSTANCE_DIR, exist_ok=True)
 
