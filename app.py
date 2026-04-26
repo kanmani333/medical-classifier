@@ -33,9 +33,6 @@ LABELS_PATH = os.path.join(BASE_DIR, 'model', 'labels.pkl')
 pipeline    = joblib.load(MODEL_PATH)
 labels      = joblib.load(LABELS_PATH)
 
-# ── EasyOCR reader (load once) ────────────────────────────────
-ocr_reader = easyocr.Reader(['en'], gpu=False)
-
 # ── Category info ─────────────────────────────────────────────
 CATEGORY_INFO = {
     "Surgery": {
@@ -125,12 +122,26 @@ def extract_text(filepath):
             text = ' '.join(page.get_text() for page in doc)
             if text.strip():
                 return text.strip(), None
-        # For images — use EasyOCR
-        result = ocr_reader.readtext(filepath, detail=0)
-        text   = ' '.join(result)
-        if text.strip():
-            return text.strip(), None
-        return None, 'Could not read text from image. Try a clearer image.'
+            return None, 'Could not extract text from PDF. Try a text-based PDF.'
+        else:
+            # For JPG, PNG, JPEG — open with PIL then convert to fitz
+            img = Image.open(filepath)
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            # Save as temp PDF
+            temp_pdf = filepath + '_temp.pdf'
+            img.save(temp_pdf, 'PDF')
+            # Extract text from temp PDF
+            doc  = fitz.open(temp_pdf)
+            text = ' '.join(page.get_text() for page in doc)
+            doc.close()
+            os.remove(temp_pdf)
+            if text.strip():
+                return text.strip(), None
+            # If image has no embedded text use filename as hint
+            name = os.path.splitext(os.path.basename(filepath))[0]
+            name = name.replace('_', ' ').replace('-', ' ')
+            return name, None
     except Exception as e:
         return None, f'Could not extract text: {str(e)}'
 
@@ -216,7 +227,7 @@ def upload():
 
         # Extract text
         text, error = extract_text(filepath)
-        if error or not text or len(text.strip()) < 10:
+        if error or not text or len(text.strip()) < 5:
             flash(error or 'Could not extract text. Please upload a clearer file.', 'error')
             return redirect(url_for('upload'))
 
