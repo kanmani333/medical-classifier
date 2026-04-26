@@ -6,7 +6,6 @@ import sqlite3, os, joblib, datetime, json
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
-import easyocr
 
 # ── App config ────────────────────────────────────────────────
 app = Flask(__name__)
