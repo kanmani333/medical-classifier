@@ -211,8 +211,10 @@ def upload():
 
         # Save file
         filename = secure_filename(file.filename)
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
         filepath = os.path.join(UPLOAD_DIR, filename)
         file.save(filepath)
+        
 
         # Extract text
         text, error = extract_text(filepath)
