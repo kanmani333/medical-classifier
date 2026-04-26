@@ -70,8 +70,7 @@ def get_db():
     return db
 
 def init_db():
-    os.makedirs(UPLOAD_DIR,   exist_ok=True)
-    os.makedirs(INSTANCE_DIR, exist_ok=True)
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
     db = get_db()
     db.execute('''CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -124,9 +123,9 @@ def extract_text(filepath):
                 return text.strip(), None
             return None, 'Could not extract text from PDF.'
         else:
-            img  = Image.open(filepath)
             import pytesseract
             pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+            img  = Image.open(filepath)
             text = pytesseract.image_to_string(img)
             if text.strip():
                 return text.strip(), None
@@ -214,7 +213,6 @@ def upload():
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         filepath = os.path.join(UPLOAD_DIR, filename)
         file.save(filepath)
-        
 
         # Extract text
         text, error = extract_text(filepath)
@@ -241,6 +239,32 @@ def upload():
         return redirect(url_for('result', report_id=report_id))
 
     return render_template('upload.html')
+
+@app.route('/classify_text', methods=['POST'])
+@login_required
+def classify_text():
+    text = request.form.get('text', '').strip()
+    if not text or len(text) < 10:
+        flash('Please enter at least 10 characters of medical text.', 'error')
+        return redirect(url_for('upload'))
+
+    # Classify
+    category   = pipeline.predict([text])[0]
+    confidence = get_confidence(text)
+    keywords   = highlight_keywords(text, category)
+
+    # Save to DB
+    db = get_db()
+    db.execute('''INSERT INTO reports
+                  (user_id, filename, extracted_text, category, confidence, keywords, created_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?)''',
+               (current_user.id, 'text_input.txt', text[:2000], category, confidence,
+                json.dumps(keywords), datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    db.commit()
+    report_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
+    db.close()
+
+    return redirect(url_for('result', report_id=report_id))
 
 @app.route('/result/<int:report_id>')
 @login_required
