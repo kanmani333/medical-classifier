@@ -122,26 +122,15 @@ def extract_text(filepath):
             text = ' '.join(page.get_text() for page in doc)
             if text.strip():
                 return text.strip(), None
-            return None, 'Could not extract text from PDF. Try a text-based PDF.'
+            return None, 'Could not extract text from PDF.'
         else:
-            # For JPG, PNG, JPEG — open with PIL then convert to fitz
-            img = Image.open(filepath)
-            if img.mode != 'RGB':
-                img = img.convert('RGB')
-            # Save as temp PDF
-            temp_pdf = filepath + '_temp.pdf'
-            img.save(temp_pdf, 'PDF')
-            # Extract text from temp PDF
-            doc  = fitz.open(temp_pdf)
-            text = ' '.join(page.get_text() for page in doc)
-            doc.close()
-            os.remove(temp_pdf)
+            img  = Image.open(filepath)
+            import pytesseract
+            pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+            text = pytesseract.image_to_string(img)
             if text.strip():
                 return text.strip(), None
-            # If image has no embedded text use filename as hint
-            name = os.path.splitext(os.path.basename(filepath))[0]
-            name = name.replace('_', ' ').replace('-', ' ')
-            return name, None
+            return None, 'Could not read text from image. Try a clearer image.'
     except Exception as e:
         return None, f'Could not extract text: {str(e)}'
 
