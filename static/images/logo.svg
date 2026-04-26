@@ -1,0 +1,15 @@
+<svg width="400" height="440" viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg">
+  <path d="M340 55 L445 102 L445 215 Q445 295 340 335 Q235 295 235 215 L235 102 Z" fill="#0d1f35" opacity="0.08" transform="translate(4,6)"/>
+  <path d="M340 55 L235 102 L235 215 Q235 295 340 335 Z" fill="#1a7fe8"/>
+  <path d="M340 55 L445 102 L445 215 Q445 295 340 335 Z" fill="#0fa36b"/>
+  <path d="M340 55 L445 102 L445 135 Q395 110 340 105 Q285 110 235 135 L235 102 Z" fill="white" opacity="0.12"/>
+  <path d="M340 55 L445 102 L445 215 Q445 295 340 335 Q235 295 235 215 L235 102 Z" fill="none" stroke="white" stroke-width="2.5" opacity="0.4"/>
+  <rect x="324" y="138" width="32" height="104" rx="10" fill="white"/>
+  <rect x="300" y="162" width="80" height="32" rx="10" fill="white"/>
+  <rect x="324" y="162" width="32" height="32" rx="6" fill="#e8f4ff" opacity="0.5"/>
+  <text x="340" y="376" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="3">
+    <tspan fill="#1a7fe8">MEDI</tspan><tspan fill="#0fa36b">CLASSIFY</tspan>
+  </text>
+  <line x1="220" y1="390" x2="460" y2="390" stroke="#dde" stroke-width="1"/>
+  <text x="340" y="414" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="15" font-weight="500" fill="#0fa36b" letter-spacing="1">Diagnose Faster. Treat Better.</text>
+</svg>
