@@ -6,6 +6,7 @@ import sqlite3, os, joblib, datetime, json
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
+import easyocr
 
 # ── App config ────────────────────────────────────────────────
 app = Flask(__name__)
@@ -32,6 +33,9 @@ MODEL_PATH  = os.path.join(BASE_DIR, 'model', 'svm_pipeline.pkl')
 LABELS_PATH = os.path.join(BASE_DIR, 'model', 'labels.pkl')
 pipeline    = joblib.load(MODEL_PATH)
 labels      = joblib.load(LABELS_PATH)
+
+# ── EasyOCR reader (load once) ────────────────────────────────
+ocr_reader = easyocr.Reader(['en'], gpu=False)
 
 # ── Category info ─────────────────────────────────────────────
 CATEGORY_INFO = {
@@ -120,18 +124,14 @@ def extract_text(filepath):
         if ext == 'pdf':
             doc  = fitz.open(filepath)
             text = ' '.join(page.get_text() for page in doc)
+            if text.strip():
+                return text.strip(), None
+        # For images — use EasyOCR
+        result = ocr_reader.readtext(filepath, detail=0)
+        text   = ' '.join(result)
+        if text.strip():
             return text.strip(), None
-        else:
-            try:
-                import pytesseract
-                pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
-                img  = Image.open(filepath)
-                text = pytesseract.image_to_string(img)
-                if text.strip():
-                    return text.strip(), None
-                return None, 'Could not read text from image. Try a clearer image or PDF.'
-            except Exception as e:
-                return None, f'Image OCR failed: {str(e)}. Please upload a PDF instead.'
+        return None, 'Could not read text from image. Try a clearer image.'
     except Exception as e:
         return None, f'Could not extract text: {str(e)}'
 
@@ -218,7 +218,7 @@ def upload():
         # Extract text
         text, error = extract_text(filepath)
         if error or not text or len(text.strip()) < 10:
-            flash(error or 'Could not extract text. Please upload a clearer PDF or image.', 'error')
+            flash(error or 'Could not extract text. Please upload a clearer file.', 'error')
             return redirect(url_for('upload'))
 
         # Classify
