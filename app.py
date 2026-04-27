@@ -16,7 +16,6 @@ BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR   = os.path.join(BASE_DIR, 'uploads')
 INSTANCE_DIR = '/tmp'
 os.makedirs(UPLOAD_DIR,   exist_ok=True)
-os.makedirs(INSTANCE_DIR, exist_ok=True)
 
 app.config['UPLOAD_FOLDER']      = UPLOAD_DIR
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -58,7 +57,34 @@ CATEGORY_INFO = {
         "desc": "Report relates to brain and nervous system conditions.",
         "keywords": ["seizure", "eeg", "cranial", "cerebral", "nerve", "brain",
                      "neurological", "cortex", "spinal", "neurology"]
-    }
+    },
+    
+    
+    "Cardiovascular / Pulmonary": {
+        "icon": "❤️",
+        "color": "#FF7675",
+        "bg": "#FFF5F5",
+        "desc": "Report relates to heart and lung conditions.",
+        "keywords": ["cardiac", "heart", "ecg", "coronary", "pulmonary",
+                     "chest", "blood pressure", "artery", "lung", "oxygen"]
+    },
+    "Gastroenterology": {
+        "icon": "🫁",
+        "color": "#FDCB6E",
+        "bg": "#FFFBF0",
+        "desc": "Report relates to digestive system conditions.",
+        "keywords": ["gastric", "colon", "bowel", "liver", "endoscopy",
+                     "colonoscopy", "stomach", "intestine", "hepatic", "digest"]
+    },
+    "General Medicine": {
+        "icon": "👨‍⚕️",
+        "color": "#74B9FF",
+        "bg": "#F0F8FF",
+        "desc": "Report relates to general medical conditions and primary care.",
+        "keywords": ["fever", "infection", "antibiotic", "diagnosis", "treatment",
+                     "medication", "blood", "pressure", "glucose", "diabetes",
+                     "thyroid", "anemia", "hypertension", "pain", "fatigue"]
+    },
 }
 
 # ── Database ──────────────────────────────────────────────────
